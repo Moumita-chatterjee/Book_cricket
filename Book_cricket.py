@@ -5,100 +5,108 @@ Objective:1. Book cricket assignment using random library
 #import ramdom library for selecting random numbers
 import random
 
-#Defining two teams and taking names for both team
-def teams():
-    team_a = []
-    team_b = []
-    for names in range(2):
-        name_player_a = input("Enter name of player for team A: ")
-        team_a.append(name_player_a)
+class Cricket:
+    def __init__(self):
+        self.team1 = []
+        self.team2 = []
+        self.over =0
+        self.balls = 0
+        self.team1_score = 0
+        self.team2_score = 0
+        #file = open("E:/Workspace/Python/Classes/python_classes/Book_cricket_log.txt","w+")
 
-    print("Team A",team_a, "\n")
-    print("*"*80)
-
-    for names in range(2):
-        name_player_b = input("Enter name of player for team B: ")
-        team_b.append(name_player_b)
-
-    print("Team B",team_b)
-    print("*" * 80)
-
-#Function to perform toss to check who will play first
-def toss():
-    value = ["head", "tail"] #String value is taken to store head and tail value
-    while True:
-
-        random.choice(value) #For string use random.choice
-        if random.choice(value) == "head":
-            print("Team A won the Toss and batting first")
-            print("*" * 80)
-        elif random.choice(value) == "tail":
-            print("Team B won the toss and batting first")
-            print("*" * 80)
-        break
+    def team_player(self):
+        self.no_players = int(input("Enter number of players per team (between:1-5):"))
+        for team in range (self.no_players):
+            team_a = input("Enter player's name for team1:")
+            self.team1.append(team_a)
+            team_b = input("Enter player's name for team2:")
+            self.team2.append(team_b)
 
 
-def match():
-    run_a = 0
-    run_b = 0
-    team_one = []
-    team_two =[]
+    def view_team(self):
+        print("\n","Team1:",self.team1,"\n","Team2:",self.team2)
 
-    #Two for loops for two teams and no. of players playing in each team is 2
-    for players in range (2):
-        print("new player of first team ","\n")
+    def overs(self):
+        print("*" * 80)
+        self.over = int(input("Choose overs between 1-5:"))
+        self.total_balls = self.over * 6
+        print("Total Overs =",self.over)
+        self.balls = self.total_balls
+
+    def toss(self):
+        value = ["head", "tail"]  # String value is taken to store head and tail value
         while True:
-            random_integer = random.randint(0, 6) #To select random integer use randint
-            if random_integer > 0:
-                #print(random_integer)
-                run_a = run_a + random_integer
-                print("run", run_a)
-                input("press any button to continue next ball: ")
-                
+            #random.choice(value)  # For string use random.choice
+            if random.choice(value) == "head":
+                print("Team1 won the Toss and batting first")
+                print("*" * 80)
+                return "team1"
             else:
-                print(random_integer)
-                print("out")
-                print("run", run_a)
-                break
-    print("Total Score of the first team : ", run_a)
-    team_one = run_a
+                print("Team B won the toss and batting first")
+                print("*" * 80)
+                return "team2"
+            break
 
-    for players in range (2):
-        print("new player of second team ","\n")
-        while True:
-            random_integer = random.randint(0, 6)
-            if random_integer > 0:
-                print(random_integer)
-                run_b = run_b + random_integer
-                print("run", run_b)
-                input("press any button to continue next ball: ")
+    def match(self, toss_winner):
+        for team_num, team in enumerate([self.team1, self.team2], start=1):
+            # Decide batting order based on toss
+            if (toss_winner == "team1" and team_num == 1) or (toss_winner == "team2" and team_num == 2):
+                print(f"\n--- Team {team_num} is Batting ---")
             else:
-                print("run",random_integer)
-                print("out","\n")
-                print("run", run_b)
-                break
-    print("Total Score of second team  : ", run_b)
-    team_two = run_b
-    if team_one > team_two:
-        difference_score = team_one - team_two
-        print("Team A wins the match by ",difference_score,"runs")
-    else:
-        differ_score = team_two - team_one
-        print("Team A wins the match by ",differ_score,"runs")
+                # Reset balls for second innings
+                self.balls = self.total_balls
+                print(f"\n--- Team {team_num} is Batting ---")
+
+            total_runs = 0
+            for i in range(self.no_players):
+                player = team[i]
+                print(f"\nNew player: {player}")
+                player_run = 0
+                while self.balls > 0:
+                    run = random.randint(0, 6)
+                    print(f"Ball {self.total_balls - self.balls + 1}: ", end="")
+
+                    if run == 0:
+                        print("OUT!")
+                        print(f"{player} scored {player_run} runs.")
+                        break
+                    else:
+                        print(f"{run} runs")
+                        player_run += run
+                        self.balls -= 1
+                        input("Press Enter for next ball...")
+
+                total_runs += player_run
+
+            print(f"Total Score for Team {team_num}: {total_runs}")
+            if team_num == 1:
+                self.team1_score = total_runs
+            else:
+                self.team2_score = total_runs
+
+    def winner(self):
+        print("*"*80)
+        if self.team1_score > self.team2_score:
+            difference_score = self.team1_score - self.team2_score
+            print("Team A wins the match by ", difference_score, "runs")
+        elif self.team2_score > self.team1_score:
+            differ_score = self.team2_score - self.team1_score
+            print("Team B wins the match by ", differ_score, "runs")
+        else:
+            print("Match Draw")
+
+
+
 
 if __name__ == "__main__":
-    try:
-        print("Welcome to book cricket game","\n")
-        print("*" * 80)
-        print("There will be two teams","\n","Team A and Team B","\n")
-        teams()
-        print("\n","Begin the toss","\n")
-        toss()
-        print("Congratulations, let's begin the match","\n")
-        match()
-    except:
-        print("Some error happens")
-    finally:
-        print("\n","Match is over")
+  
+    cricket = Cricket()
+    cricket.team_player()
+    cricket.view_team()
+    cricket.overs()
+    toss_winner = cricket.toss()
+    cricket.match(toss_winner)
+    cricket.winner()
 
 
